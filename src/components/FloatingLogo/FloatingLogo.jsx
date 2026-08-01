@@ -124,7 +124,7 @@ export default function FloatingLogo() {
 
       const p = heroSmoothed;
       const rawT = transSmoothed;
-      // Apply ease-out for a natural deceleration as logo settles into nav
+      // Apply ease-out for a natural deceleration as logo settles into nav.
       const t = easeOutCubic(rawT);
 
       // ====== HERO PHASE (stroke draw + reveal) ======
@@ -160,10 +160,12 @@ export default function FloatingLogo() {
       // --- Size interpolation (proportionate logo in nav header: 64px) ---
       const startSize = Math.min(340, vw * 0.8);
       const endSize = 80;
-      const currentSize = lerp(startSize, endSize, t);
+      // A tiny overshoot at the end gives the logo a satisfying, physical settle.
+      const settle = Math.sin(Math.min(rawT, 1) * Math.PI) * 0.055;
+      const currentSize = lerp(startSize, endSize, t) * (1 + settle);
 
       // --- Position interpolation with slight arc (add a curve via Y offset) ---
-      const arcOffset = Math.sin(t * Math.PI) * -60; // slight upward arc
+      const arcOffset = Math.sin(t * Math.PI) * -44;
       const currentX = lerp(centerX, targetX, t);
       const currentY = lerp(centerY, targetY, t) + arcOffset;
 
@@ -175,7 +177,8 @@ export default function FloatingLogo() {
       logo.style.width = `${currentSize}px`;
       logo.style.left = `${currentX}px`;
       logo.style.top = `${currentY}px`;
-      logo.style.transform = `translate(-50%, -50%)`;
+      const rotation = Math.sin(rawT * Math.PI) * -4;
+      logo.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
 
       // --- Subtle glow when logo is settling into nav ---
       const glowIntensity = smoothstep(0.7, 0.95, rawT) * (1 - smoothstep(0.95, 1, rawT));
