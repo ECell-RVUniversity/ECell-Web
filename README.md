@@ -4,7 +4,7 @@
 
 ## Demo
 
-https://github.com/user-attachments/assets/6f5410de-f705-4825-869b-9be1dcf7b32b
+https://github.com/user-attachments/assets/9ab5ec05-6a5e-4ba2-923c-7685b89def26
 
 ---
 
@@ -22,7 +22,7 @@ ECell-Web/
 │   └── workflows/           # GitHub Actions workflows
 ├── app/                     # Next.js application routes/pages
 ├── public/                  # Static assets
-├── src/                     # Main source code│   
+├── src/                     # Main source code  
 ├── tests/                   # Automated tests
 ├── .gitignore               # Git ignore rules
 ├── CONTRIBUTING.md          # Contribution guidelines
@@ -37,3 +37,11 @@ ECell-Web/
 ├── vercel.json              # Vercel configuration
 └── vitest.config.mts        # Vitest configuration
 ```
+---
+
+## Contributors 
+
+- [@AkshayS2020git](https://github.com/AkshayS2020git)
+- [@akash0-real](https://github.com/akash0-real)
+- [@shrisha77-boop](https://github.com/shrisha77-boop)
+- Aditya Dixit 
