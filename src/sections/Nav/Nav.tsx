@@ -31,7 +31,16 @@ export default function Nav(): React.ReactElement {
     setIsOpen(false);
     const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
+      const navigationEvent = new CustomEvent<{ targetId: string }>("horizontal-flow:navigate", {
+        detail: { targetId: id },
+        cancelable: true,
+      });
+      window.dispatchEvent(navigationEvent);
+
+      // Sections outside the pinned horizontal flow still use standard anchor scrolling.
+      if (!navigationEvent.defaultPrevented) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
     }
   };
 

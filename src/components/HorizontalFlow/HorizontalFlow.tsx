@@ -22,7 +22,7 @@ export default function HorizontalFlow({ children }: HorizontalFlowProps): React
     const ctx = gsap.context(() => {
       const getScrollAmount = () => track.scrollWidth - window.innerWidth;
 
-      gsap.to(track, {
+      const horizontalTween = gsap.to(track, {
         x: () => -getScrollAmount(),
         ease: "none",
         scrollTrigger: {
@@ -35,6 +35,30 @@ export default function HorizontalFlow({ children }: HorizontalFlowProps): React
           invalidateOnRefresh: true,
         },
       });
+
+      const navigateToPanel = (event: Event) => {
+        const targetId = (event as CustomEvent<{ targetId?: string }>).detail?.targetId;
+        const target = targetId ? document.getElementById(targetId) : null;
+        const panel = target?.closest<HTMLElement>(".horizontal-flow-panel");
+        const scrollTrigger = horizontalTween.scrollTrigger;
+
+        if (!panel || !container.contains(panel) || !scrollTrigger) return;
+
+        const panels = Array.from(track.children);
+        const panelIndex = panels.indexOf(panel);
+        const lastPanelIndex = panels.length - 1;
+        if (panelIndex < 0 || lastPanelIndex < 1) return;
+
+        // A pinned horizontal track has one vertical scroll position for every
+        // panel. Translate the requested panel into its ScrollTrigger progress.
+        const progress = panelIndex / lastPanelIndex;
+        const scrollPosition = scrollTrigger.start + (scrollTrigger.end - scrollTrigger.start) * progress;
+        event.preventDefault();
+        window.scrollTo({ top: scrollPosition, behavior: "smooth" });
+      };
+
+      window.addEventListener("horizontal-flow:navigate", navigateToPanel);
+      return () => window.removeEventListener("horizontal-flow:navigate", navigateToPanel);
     }, container);
 
     return () => ctx.revert();
