@@ -42,18 +42,18 @@
   }
 
   .hero__marquee-line {
-    font-size: clamp(28px, 8.8vw, 48px);
+    font-size: clamp(26px, min(8.8vw, 8vh), 48px);
     letter-spacing: -0.03em;
     line-height: 0.92;
     text-shadow: none;
   }
 
   .hero__marquee-line--startups {
-    font-size: clamp(26px, 8vw, 44px);
+    font-size: clamp(24px, min(8vw, 7.4vh), 44px);
   }
 
   .hero__marquee-line--shape {
-    font-size: clamp(30px, 9.5vw, 52px);
+    font-size: clamp(28px, min(9.5vw, 8.8vh), 52px);
     letter-spacing: -0.02em;
   }
 }
@@ -77,13 +77,12 @@
   }
 
   .hero__marquee-line--startups {
-    font-size: clamp(23px, 7.4vw, 30px);
+    font-size: clamp(22px, min(7.4vw, 7vh), 30px);
     letter-spacing: -0.03em;
   }
 
   .hero__marquee-line--shape {
-    font-size: clamp(27px, 8.8vw, 36px);
+    font-size: clamp(26px, min(8.8vw, 8vh), 36px);
     letter-spacing: -0.02em;
   }
 }
-

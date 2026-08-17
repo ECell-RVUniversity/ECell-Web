@@ -1,13 +1,14 @@
 .hero__marquee-group {
   position: absolute;
   top: 50%;
-  left: 0;
-  right: 0;
+  inset-inline: 0;
   z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(12px, 3vh, 24px);
+  gap: clamp(8px, 2.2vh, 24px);
+  padding-inline: clamp(12px, 2vw, 32px);
+  box-sizing: border-box;
   opacity: 0;
   transform: translateY(-50%);
   pointer-events: none;
@@ -16,12 +17,15 @@
 
 .hero__marquee-line {
   overflow: hidden;
+  width: 100%;
   color: var(--fg);
   font-family: var(--font-archivo), sans-serif;
-  font-size: clamp(138px, 12vw, 184px);
+  /* Use the smaller viewport dimension so landscape screens do not crop the
+     phrase while tall screens do not make it feel disproportionately small. */
+  font-size: clamp(32px, min(12vw, 18vh), 184px);
   font-weight: 900;
   line-height: 0.82;
-  letter-spacing: -4.5px;
+  letter-spacing: clamp(-4.5px, -0.3vw, -1.5px);
   white-space: nowrap;
   text-shadow:
     0 0 40px rgba(244, 244, 242, 0.15),
@@ -32,16 +36,16 @@
   color: rgba(244, 244, 242, 0.92);
   font-family: var(--font-fraunces), Georgia, serif;
   font-style: italic;
-  font-size: clamp(138px, 12vw, 184px);
+  font-size: clamp(32px, min(12vw, 18vh), 184px);
   font-weight: 400;
   line-height: 0.8;
-  letter-spacing: -3px;
+  letter-spacing: clamp(-3px, -0.2vw, -1px);
   text-shadow:
     0 0 30px rgba(244, 244, 242, 0.08);
 }
 
 .hero__marquee-line--startups {
-  font-size: clamp(128px, calc(12vw - 10px), 174px);
+  font-size: clamp(30px, min(11.2vw, 16.8vh), 174px);
 }
 
 .hero__marquee-line span {
@@ -50,8 +54,22 @@
 }
 
 @media (max-width: 768px) {
-  .hero__marquee-line {
-    text-shadow: none;
+  .hero__marquee-group {
+    gap: clamp(4px, 1.2vh, 10px);
+    padding-inline: 16px;
   }
 
+  .hero__marquee-line {
+    text-shadow: none;
+    font-size: clamp(26px, min(8.8vw, 8vh), 48px);
+    letter-spacing: -0.03em;
+  }
+
+  .hero__marquee-line--startups {
+    font-size: clamp(24px, min(8vw, 7.4vh), 44px);
+  }
+
+  .hero__marquee-line--shape {
+    font-size: clamp(28px, min(9.5vw, 8.8vh), 52px);
+  }
 }
