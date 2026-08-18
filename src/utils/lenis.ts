@@ -52,6 +52,13 @@ export function acquireLenis(): {
         window.cancelAnimationFrame(animationFrameId);
         animationFrameId = null;
       }
+
+      // Lenis attaches input listeners when constructed. Destroy the idle
+      // instance so routes without a smooth-scroll consumer keep native scroll.
+      if (consumerCount === 0 && sharedLenis) {
+        sharedLenis.destroy();
+        sharedLenis = null;
+      }
     },
   };
 }

@@ -24,10 +24,10 @@ export default function PageTransition({ active, targetView }: PageTransitionPro
           <div className="ring ring-3"></div>
         </div>
         <div className="transition-title">
-          {isEnteringEvents ? "ENTERING 3D VIRTUAL SCROLL" : "RETURNING TO MAIN PAGE"}
+          {isEnteringEvents ? "OPENING EVENTS" : "RETURNING HOME"}
         </div>
         <div className="transition-subtitle">
-          {isEnteringEvents ? "E-Cell Events Gallery" : "E-Cell RV University"}
+          E-Cell RV University
         </div>
       </div>
 

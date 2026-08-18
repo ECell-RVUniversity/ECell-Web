@@ -71,6 +71,44 @@ nav a {
   text-transform: uppercase;
 }
 
+.nav-events-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 0;
+  border: 0;
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nav-events-link::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 2px;
+  left: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 240ms ease;
+}
+
+.nav-events-link:hover::after,
+.nav-events-link.is-active::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+.nav-events-link:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 5px;
+}
+
 .menu-icon {
   position: relative;
   display: inline-flex;
