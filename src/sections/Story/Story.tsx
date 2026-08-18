@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import { gsap, ScrollTrigger } from "../../utils/gsapSetup";
-import Lenis from "lenis";
+import { acquireLenis } from "../../utils/lenis";
 import storyBackground from "../../assets/story/lib.png";
 import "./Story.css";
 
@@ -78,16 +78,9 @@ export default function Story({
 
     const isMobile = window.matchMedia("(max-width: 767px)").matches;
 
-    // --- Lenis smooth scroll (desktop only) ---
-    let lenis: Lenis | null = isMobile
-      ? null
-      : new Lenis({
-          duration: 1.2,
-          easing: (t) => 1 - Math.pow(1 - t, 4),
-          smoothWheel: true,
-        });
-
-    let rafId: number | null = null;
+    // --- Shared Lenis smooth scroll (desktop only) ---
+    const lenisHandle = isMobile ? null : acquireLenis();
+    const lenis = lenisHandle?.instance ?? null;
     let disposed = false;
     let tickerCallback: ((time: number, deltaTime: number) => void) | null = null;
 
@@ -95,15 +88,8 @@ export default function Story({
       ScrollTrigger.update();
     };
 
-    const updateLenis = (time: number) => {
-      if (disposed) return;
-      lenis?.raf(time);
-      rafId = requestAnimationFrame(updateLenis);
-    };
-
     if (lenis) {
       lenis.on("scroll", scrollUpdateHandler);
-      rafId = requestAnimationFrame(updateLenis);
     }
 
     const mm = gsap.matchMedia();
@@ -335,18 +321,12 @@ export default function Story({
         gsap.ticker.remove(tickerCallback);
       }
 
-      if (rafId !== null) {
-        cancelAnimationFrame(rafId);
-        rafId = null;
-      }
-
       mm.revert();
 
       if (lenis) {
         lenis.off("scroll", scrollUpdateHandler);
-        lenis.destroy();
-        lenis = null;
       }
+      lenisHandle?.release();
     };
   }, [headlineMain, headlineAccent]);
 

@@ -1,11 +1,39 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import PageTransition from "../../components/PageTransition/PageTransition";
 import "./Nav.css";
 
 export default function Nav(): React.ReactElement {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [transitionTarget, setTransitionTarget] = useState<"events" | "home">("events");
+  const pathname = usePathname();
+  const router = useRouter();
   const toggleRef = useRef<HTMLButtonElement | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const transitionTimeoutRef = useRef<number | null>(null);
+
+  const openEvents = () => {
+    if (pathname === "/events" || isTransitioning) return;
+
+    setIsOpen(false);
+    setTransitionTarget("events");
+    setIsTransitioning(true);
+    transitionTimeoutRef.current = window.setTimeout(() => {
+      router.push("/events");
+    }, 720);
+  };
+
+  const openHome = () => {
+    if (pathname === "/" || isTransitioning) return;
+
+    setTransitionTarget("home");
+    setIsTransitioning(true);
+    transitionTimeoutRef.current = window.setTimeout(() => {
+      router.push("/");
+    }, 720);
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -24,6 +52,9 @@ export default function Nav(): React.ReactElement {
     document.addEventListener("click", handleClickOutside);
     return () => {
       document.removeEventListener("click", handleClickOutside);
+      if (transitionTimeoutRef.current !== null) {
+        window.clearTimeout(transitionTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -58,13 +89,21 @@ export default function Nav(): React.ReactElement {
       <nav>
         <button
           className="logo nav__logo-container nav__logo-button"
-          onClick={() => window.location.reload()}
+          onClick={pathname === "/" ? () => window.location.reload() : openHome}
           type="button"
-          aria-label="Reload homepage"
+          aria-label={pathname === "/" ? "Reload homepage" : "Return to homepage"}
         >
           <div className="nav__logo-icon-target" />
         </button>
         <div className="nav-right">
+          <button
+            className={`nav-events-link ${pathname === "/events" ? "is-active" : ""}`}
+            onClick={openEvents}
+            type="button"
+            aria-current={pathname === "/events" ? "page" : undefined}
+          >
+            Events
+          </button>
           <button
             ref={toggleRef}
             className="chapters-toggle"
@@ -91,6 +130,8 @@ export default function Nav(): React.ReactElement {
           </button>
         </div>
       </nav>
+
+      <PageTransition active={isTransitioning} targetView={transitionTarget} />
 
       <div
         ref={dropdownRef}
