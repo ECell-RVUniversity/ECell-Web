@@ -33,7 +33,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     alt: "Hackathon",
   },
   {
-    caption: "Argonyx Hackathon - September 2025",
+    caption: "Argonyx 2.0 - September 2025",
     src: argonyx2,
     alt: "Argonyx 2.0 event",
   },
