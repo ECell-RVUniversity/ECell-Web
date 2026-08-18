@@ -37,6 +37,22 @@ ECell-Web/
 ├── vercel.json              # Vercel configuration
 └── vitest.config.mts        # Vitest configuration
 ```
+
+## Manual Vercel deployment
+
+This repository includes a GitHub Actions workflow for production deployments:
+`.github/workflows/deploy-vercel.yml`.
+
+Before using it, add these repository or `production` environment secrets in
+GitHub under **Settings → Secrets and variables → Actions**:
+
+- `VERCEL_TOKEN` — a Vercel access token
+- `VERCEL_ORG_ID` — the Vercel team ID (or account ID)
+- `VERCEL_PROJECT_ID` — the Vercel project ID
+
+To deploy, open **Actions → Deploy to Vercel → Run workflow**, select the
+`main` branch, and run it. The workflow builds and deploys the prebuilt output
+to Vercel production.
 ---
 
 ## Contributors 
@@ -44,4 +60,4 @@ ECell-Web/
 - [@AkshayS2020git](https://github.com/AkshayS2020git)
 - [@akash0-real](https://github.com/akash0-real)
 - [@shrisha77-boop](https://github.com/shrisha77-boop)
-- Aditya Dixit 
+- Aditya Dixit
