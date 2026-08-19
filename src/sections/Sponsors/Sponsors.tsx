@@ -22,27 +22,28 @@ export interface SponsorItem {
   logoKey?: string;
   tier?: "featured" | "core";
   row: number;
+  url?: string;
 }
 
 const SPONSORS_CONSTELLATION: SponsorItem[] = [
   // Row 1: 2 items (North Pioneers)
-  { id: "node-nokia", name: "Nokia", logo: nokiaLogo, logoKey: "nokia", tier: "featured", row: 1 },
-  { id: "node-redbull", name: "Red Bull", logo: redbull, tier: "featured", row: 1 },
+  { id: "node-nokia", name: "Nokia", logo: nokiaLogo, logoKey: "nokia", tier: "featured", row: 1, url: "https://www.nokia.com/" },
+  { id: "node-redbull", name: "Red Bull", logo: redbull, tier: "featured", row: 1, url: "https://www.redbull.com/" },
 
   // Row 2: 4 items (Mid-North Anchors)
-  { id: "node-waffle", name: "The Belgian Waffle Co.", logo: waffleLogo, tier: "core", row: 2 },
-  { id: "node-tvs", name: "TVS Prakruthi Bikes", logo: tvsLogo, tier: "core", row: 2 },
-  { id: "node-herody", name: "Herody", logo: herodyLogo, logoKey: "herody", tier: "featured", row: 2 },
-  { id: "node-merc", name: "Akshaya Motors", logo: mercLogo, tier: "featured", row: 2 },
+  { id: "node-waffle", name: "The Belgian Waffle Co.", logo: waffleLogo, tier: "core", row: 2, url: "https://thebelgianwaffle.co/" },
+  { id: "node-tvs", name: "TVS Prakruthi Bikes", logo: tvsLogo, tier: "core", row: 2, url: "https://tvsmotor.com" },
+  { id: "node-herody", name: "Herody", logo: herodyLogo, logoKey: "herody", tier: "featured", row: 2, url: "https://herody.in" },
+  { id: "node-merc", name: "Akshaya Motors", logo: mercLogo, tier: "featured", row: 2, url: "https://www.mercedes-benz.co.in/" },
 
   // Row 3: 3 items (Mid-South Growth Network)
   { id: "node-attys", name: "Atty's Bakery & Confectionery", logo: attysLogo, tier: "core", row: 3 },
   { id: "node-cube", name: "Cube", logo: cubeLogo, tier: "core", row: 3 },
-  { id: "node-justvend", name: "Justvend", logo: justvendLogo, tier: "core", row: 3 },
+  { id: "node-justvend", name: "Justvend", logo: justvendLogo, tier: "core", row: 3, url: "https://www.justvend.in" },
 
   // Row 4: 2 items (South Base Connectors)
-  { id: "node-easybites", name: "EasyBites", logo: easyBitesLogo, tier: "core", row: 4 },
-  { id: "node-mile", name: "mile", logo: mileLogo, tier: "core", row: 4 },
+  { id: "node-easybites", name: "EasyBites", logo: easyBitesLogo, tier: "core", row: 4, url: "https://easybites.in/" },
+  { id: "node-mile", name: "mile", logo: mileLogo, tier: "core", row: 4, url: "https://www.mile.tech/" },
 ];
 
 export default function Sponsors(): React.ReactElement {
@@ -916,9 +917,9 @@ function SponsorCard({
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 }): React.ReactElement {
-  return (
+  const cardContent = (
     <div
-      className={`sponsor-card-inner tier-${item.tier || "core"}${isHovered ? " is-hovered" : ""}`}
+      className={`sponsor-card-inner tier-${item.tier || "core"}${isHovered ? " is-hovered" : ""}${item.url ? " has-link" : ""}`}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
@@ -947,5 +948,21 @@ function SponsorCard({
       </div>
     </div>
   );
+
+  if (item.url) {
+    return (
+      <a
+        href={item.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="sponsor-card-link"
+        aria-label={`Visit ${item.name} website`}
+      >
+        {cardContent}
+      </a>
+    );
+  }
+
+  return cardContent;
 }
 
