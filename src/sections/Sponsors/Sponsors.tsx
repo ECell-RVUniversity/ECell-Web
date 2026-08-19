@@ -72,7 +72,7 @@ export default function Sponsors(): React.ReactElement {
       return;
     }
 
-    const ctx = gsap.context(() => {
+const wipeCtx = gsap.context(() => {
       // ── Luminous Wipe Bar Sweep (Scroll Scrub) ──
       if (wipeBarRef.current) {
         gsap.fromTo(
@@ -101,7 +101,9 @@ export default function Sponsors(): React.ReactElement {
           },
         });
       }
+    }, section);
 
+    const headerCtx = gsap.context(() => {
       // ── Kinetic Typography: Partners slides from left, & stays center, Sponsors from right ──
       const headerTl = gsap.timeline({
         scrollTrigger: {
@@ -151,7 +153,9 @@ export default function Sponsors(): React.ReactElement {
         { y: 0, opacity: 1, filter: "blur(0px)", ease: "power3.out" },
         0.2
       );
+    }, section);
 
+    const glowCtx = gsap.context(() => {
       // ── Ambient Radial Glow Expansion ──
       if (glowRef.current) {
         gsap.fromTo(
@@ -170,10 +174,12 @@ export default function Sponsors(): React.ReactElement {
           }
         );
       }
+    }, section);
 
-      // ═════════════════════════════════════════════════════════════
+    const storyCtx = gsap.context(() => {
+      // ══════════════════════════════════════════════════════════════
       // ── AWWWARDS STORYTELLING TIMELINE: NODES → PATHS → CARDS → LOGOS ──
-      // ═════════════════════════════════════════════════════════════
+      // ══════════════════════════════════════════════════════════════
       const storyTl = gsap.timeline({
         scrollTrigger: {
           trigger: constellationRef.current,
@@ -436,7 +442,7 @@ export default function Sponsors(): React.ReactElement {
         );
       }
 
-      // ═════════════════════════════════════════════════════════════
+      // ══════════════════════════════════════════════════════════════
       // ── PHASE 4: LOGOS (Living Signal Lock-In) ──
       // Logos surge with exposure/contrast before settling into crisp clarity
       const logos = gsap.utils.toArray<HTMLElement>(".sponsor-logo");
@@ -459,10 +465,12 @@ export default function Sponsors(): React.ReactElement {
           0.9
         );
       }
+    }, section);
 
-      // ═════════════════════════════════════════════════════════════
+    const exitCtx = gsap.context(() => {
+      // ═══════════════════════════════════════════════════════════════
       // ── MORPHIC TRANSITION: ONLY FIRES ON SECTION EXIT ──
-      // ═════════════════════════════════════════════════════════════
+      // ══════════════════════════════════════════════════════════════
       const exitTl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
@@ -554,7 +562,13 @@ export default function Sponsors(): React.ReactElement {
       );
     }, section);
 
-    return () => ctx.revert();
+    return () => {
+      wipeCtx.revert();
+      headerCtx.revert();
+      glowCtx.revert();
+      storyCtx.revert();
+      exitCtx.revert();
+    };
   }, []);
 
   return (

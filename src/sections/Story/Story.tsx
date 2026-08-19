@@ -317,10 +317,6 @@ export default function Story({
     return () => {
       disposed = true;
 
-      if (tickerCallback) {
-        gsap.ticker.remove(tickerCallback);
-      }
-
       mm.revert();
 
       if (lenis) {
@@ -328,7 +324,7 @@ export default function Story({
       }
       lenisHandle?.release();
     };
-  }, [headlineMain, headlineAccent]);
+  }, [eyebrow, headlineMain, headlineAccent]);
 
   return (
     <section className="story-reveal" ref={revealRef} id="storyReveal">
