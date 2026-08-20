@@ -11,6 +11,7 @@
   flex-wrap: nowrap;
   width: 300vw;
   height: 100vh;
+  height: 100dvh;
   will-change: transform;
 }
 
@@ -24,6 +25,7 @@
   justify-content: center;
   overflow-y: auto;
   overflow-x: hidden;
+  height: 100dvh;
   box-sizing: border-box;
 }
 
@@ -55,6 +57,28 @@
   width: 100%;
   padding: clamp(40px, 5vh, 80px) 0;
   border-top: none;
+}
+
+/* Keep the speakers card inside a Mac-sized desktop viewport. The horizontal
+   panels are viewport-height scrollers, so the default portrait height and
+   vertical spacing can otherwise push the card below the visible panel. */
+@media (min-width: 769px) {
+  .horizontal-flow-panel .speakers-reveal-panel {
+    padding: clamp(28px, 4.5vh, 56px) 0;
+  }
+
+  .horizontal-flow-panel .speakers-header {
+    margin-bottom: clamp(20px, 3.5vh, 36px);
+  }
+
+  .horizontal-flow-panel .speaker-spotlight-core {
+    gap: clamp(24px, 3vw, 48px);
+    padding: clamp(20px, 3vh, 34px);
+  }
+
+  .horizontal-flow-panel .spotlight-photo-frame {
+    height: clamp(280px, 34vh, 400px);
+  }
 }
 
 .horizontal-flow-panel .whatsapp-community {

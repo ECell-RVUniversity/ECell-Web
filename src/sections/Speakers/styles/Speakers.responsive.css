@@ -28,11 +28,18 @@
 
   .spotlight-left-column {
     width: min(100%, 460px);
+    max-width: 100%;
     margin: 0 auto;
   }
 
   .spotlight-photo-frame {
     height: 320px;
+    max-width: 100%;
+  }
+
+  .speakers-showcase-container {
+    overflow: hidden;
+    max-width: 100%;
   }
 }
 
