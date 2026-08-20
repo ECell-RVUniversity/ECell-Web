@@ -48,6 +48,14 @@
   min-height: 430px;
   right: max(7vw, 48px);
   bottom: clamp(56px, 10vh, 110px);
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.why-join__stack.is-dragging {
+  cursor: grabbing;
 }
 
 .why-card {
@@ -64,6 +72,18 @@
   box-shadow: 0 18px 34px rgba(0, 0, 0, 0.28), inset 0 1px rgba(255, 255, 255, 0.1);
   color: var(--card-text);
   will-change: transform, opacity;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: box-shadow 0.25s ease;
+}
+
+.why-join__stack.is-dragging .why-card {
+  cursor: grabbing;
+}
+
+.why-card:hover {
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.38), inset 0 1px rgba(255, 255, 255, 0.16);
 }
 
 .why-card::after {
