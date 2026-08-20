@@ -24,7 +24,7 @@
   position: relative;
   overflow: hidden;
   display: grid;
-  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   gap: clamp(28px, 4.5vw, 64px);
   align-items: center;
   padding: clamp(24px, 3.5vw, 44px);
