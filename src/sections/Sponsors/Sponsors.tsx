@@ -12,7 +12,7 @@ import mileLogo from "../../assets/logos/mile.webp";
 import nokiaLogo from "../../assets/logos/nokia.webp";
 import tvsLogo from "../../assets/logos/tvs.webp";
 import waffleLogo from "../../assets/logos/waffle.svg";
-import redbull from "../../assets/logos/redbull.png";
+import redbull from "../../assets/logos/redbull.webp";
 import "./Sponsors.css";
 
 export interface SponsorItem {

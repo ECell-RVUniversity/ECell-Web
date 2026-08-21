@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from "react";
 const heroVideo = "/assets/videos/hero2-optimized.mp4";
 const heroMobileVideo = "/assets/videos/hero-mobile.mp4";
-const heroPoster = "/assets/videos/hero-poster.jpg";
+const heroPoster = "/assets/videos/hero-poster.webp";
 import { setupHeroAnimations } from "./HeroAnimations";
 import "./Hero.css";
 import "./HeroLayout.css";

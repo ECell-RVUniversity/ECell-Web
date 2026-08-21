@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import talkStartupWithMe from "../assets/events/events_photo/TalkStartupWithMe.webp";
 import winterTechTalk from "../assets/events/events_photo/WinterTechTalk.webp";
 import argonyx from "../assets/events/events_photo/argonyx.webp";
-import argonyx2 from "../assets/events/events_photo/argoynx2.jpg";
+import argonyx2 from "../assets/events/events_photo/argoynx2.webp";
 import "./EventsArchive.css";
 
 type EventType = "Hackathons" | "Talks" | "Competitions";

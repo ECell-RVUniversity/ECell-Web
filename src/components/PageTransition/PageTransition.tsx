@@ -2,8 +2,8 @@
 import React, { useLayoutEffect, useRef } from "react";
 import Image, { StaticImageData } from "next/image";
 import { gsap } from "../../utils/gsapSetup";
-import heroPoster from "../../assets/videos/hero-poster.jpg";
-import eventsBackground from "../../assets/events/background/pcTeam.jpeg";
+import heroPoster from "../../assets/videos/hero-poster.webp";
+import eventsBackground from "../../assets/events/background/pcTeam.webp";
 import "./PageTransition.css";
 
 export interface PageTransitionProps {
