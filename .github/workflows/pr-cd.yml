@@ -21,6 +21,7 @@ env:
 jobs:
   preview:
     name: Preview Deployment
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository && secrets.VERCEL_TOKEN != '' }}
     runs-on: ubuntu-latest
 
     steps:
