@@ -5,6 +5,8 @@
   height: 100dvh;
   min-height: 680px;
   overflow: hidden;
+  overflow-x: hidden;
+  box-sizing: border-box;
   background:
     radial-gradient(circle at 75% 24%, rgba(244, 244, 242, 0.06), transparent 25%),
     var(--bg);
@@ -44,9 +46,11 @@
 .why-join__stack {
   position: absolute;
   width: min(45vw, 570px);
-  height: min(52vw, 650px);
+  max-width: calc(100vw - 96px);
+  height: min(52vw, 650px, calc(100dvh - 220px));
   min-height: 430px;
   right: max(7vw, 48px);
+
   bottom: clamp(56px, 10vh, 110px);
   cursor: grab;
   touch-action: pan-y;
@@ -56,6 +60,9 @@
 
 .why-join__stack.is-dragging {
   cursor: grabbing;
+
+  bottom: clamp(56px, 12vh, 110px);
+
 }
 
 .why-card {
@@ -250,19 +257,18 @@
   background: #ffffff;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1024px) and (min-width: 768px) {
   .why-join {
-    min-height: 620px;
+    min-height: 600px;
   }
 
   .why-join__intro {
-    /* Keep the fixed navigation clear of the section heading on mobile. */
-    top: max(88px, calc(64px + env(safe-area-inset-top)));
+    top: clamp(48px, 7vh, 88px);
   }
 
   .why-join h2 {
-    max-width: 330px;
-    font-size: clamp(36px, 11vw, 56px);
+    max-width: 380px;
+    font-size: clamp(32px, 4.5vw, 52px);
   }
 
   .why-join__hint {
@@ -270,31 +276,113 @@
   }
 
   .why-join__stack {
-    width: calc(100% - 56px);
-    height: min(96vw, 480px);
+    width: min(48vw, 420px);
+    max-width: calc(100vw - 64px);
+    height: min(56vw, 480px);
     min-height: 360px;
-    right: 28px;
-    bottom: 36px;
+    right: max(4vw, 28px);
+    bottom: clamp(36px, 7vh, 80px);
   }
 
   .why-card {
-    border-radius: 25px;
-    padding: 27px;
+    border-radius: 26px;
+    padding: clamp(22px, 2.5vw, 36px);
   }
 
-  .why-card__middle {
-    left: 27px;
-    right: 27px;
-    top: 40%;
+  .why-card__number {
+    font-size: clamp(52px, 6.5vw, 90px);
   }
 
-  .why-card__icon {
-    width: 42px;
-    height: 42px;
-    font-size: 22px;
+  .why-card__content h3 {
+    font-size: clamp(24px, 2.8vw, 40px);
   }
 
   .why-card__content p {
-    margin-top: 13px;
+    font-size: clamp(13px, 1.3vw, 17px);
+    margin-top: 12px;
+  }
+
+  .why-card__icon {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .why-card__middle {
+    left: clamp(22px, 2.5vw, 36px);
+    right: clamp(22px, 2.5vw, 36px);
+  }
+}
+
+@media (max-width: 767px) {
+  .why-join {
+    min-height: auto;
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  .why-join__intro {
+    position: relative;
+    top: auto;
+    padding-top: max(88px, calc(64px + env(safe-area-inset-top)));
+    padding-bottom: 20px;
+  }
+
+  .why-join h2 {
+    max-width: 330px;
+    font-size: clamp(32px, 9vw, 48px);
+  }
+
+  .why-join__hint {
+    display: none;
+  }
+
+  .why-join__stack {
+    position: relative;
+    width: calc(100% - 48px);
+    max-width: calc(100vw - 48px);
+    height: min(110vw, 480px);
+    min-height: 340px;
+    right: auto;
+    bottom: auto;
+    margin: 0 auto;
+    padding-bottom: 36px;
+  }
+
+  .why-card {
+    border-radius: 22px;
+    padding: 22px;
+  }
+
+  .why-card__middle {
+    left: 22px;
+    right: 22px;
+    top: 38%;
+  }
+
+  .why-card__icon {
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+  }
+
+  .why-card__number {
+    font-size: clamp(48px, 14vw, 80px);
+  }
+
+  .why-card__content h3 {
+    font-size: clamp(24px, 7vw, 36px);
+  }
+
+  .why-card__content p {
+    margin-top: 10px;
+    font-size: clamp(13px, 3.5vw, 16px);
+  }
+
+  .why-card__cta {
+    margin-top: 16px;
+    padding: 10px 16px;
+    font-size: 12px;
   }
 }

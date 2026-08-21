@@ -153,6 +153,25 @@
 @keyframes about-transition-pulse { 50% { transform: translateX(220%); } }
 @keyframes about-transition-bounce { 50% { transform: translateY(4px); } }
 
+@media (max-width: 1024px) and (min-width: 769px) {
+  .about {
+    min-height: 160vh;
+    padding-top: 80px;
+    padding-bottom: 120px;
+  }
+
+  .about-words {
+    height: min(44vw, 520px);
+    min-height: 340px;
+    margin-top: 90px;
+    font-size: clamp(4rem, 9vw, 8rem);
+  }
+
+  .about-transition {
+    margin: 70px 28px 0;
+  }
+}
+
 @media (max-width: 768px) {
   .about {
     min-height: 155vh;
@@ -171,11 +190,13 @@
   }
 
   .about-words {
-    height: 88vw;
-    min-height: 340px;
+    height: auto;
+    min-height: 280px;
+    max-height: 480px;
     margin-top: 104px;
-    font-size: clamp(64px, 17vw, 130px);
+    font-size: clamp(52px, 14vw, 110px);
     line-height: 0.8;
+    overflow: hidden;
   }
 
   .about-word:nth-child(3) {
