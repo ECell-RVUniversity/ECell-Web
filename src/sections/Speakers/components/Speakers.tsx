@@ -3,11 +3,11 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Image, { StaticImageData } from "next/image";
 import { gsap } from "../../../utils/gsapSetup";
-import ambikaPhoto from "../../../assets/prevSpeakers/ambika.jpg";
-import arshdeepPhoto from "../../../assets/prevSpeakers/arshdeep.jpg";
-import guhaPhoto from "../../../assets/prevSpeakers/guha.png";
-import harpreetPhoto from "../../../assets/prevSpeakers/harpreet.jpg";
-import shariffPhoto from "../../../assets/prevSpeakers/shariff.jpg";
+import ambikaPhoto from "../../../assets/prevSpeakers/ambika.webp";
+import arshdeepPhoto from "../../../assets/prevSpeakers/arshdeep.webp";
+import guhaPhoto from "../../../assets/prevSpeakers/guha.webp";
+import harpreetPhoto from "../../../assets/prevSpeakers/harpreet.webp";
+import shariffPhoto from "../../../assets/prevSpeakers/shariff.webp";
 import "../styles/Speakers.base.css";
 import "../styles/Speakers.controls.css";
 import "../styles/Speakers.spotlight.css";

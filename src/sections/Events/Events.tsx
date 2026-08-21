@@ -4,9 +4,9 @@ import { gsap } from "../../utils/gsapSetup";
 import talkStartupWithMe from "../../assets/events/events_photo/TalkStartupWithMe.webp";
 import winterTechTalk from "../../assets/events/events_photo/WinterTechTalk.webp";
 import argonyx from "../../assets/events/events_photo/argonyx.webp";
-import argonyx2 from "../../assets/events/events_photo/argoynx2.jpg";
-import desktopTeamBg from "../../assets/events/background/pcTeam.jpeg";
-import mobileTeamBg from "../../assets/events/background/phone.jpeg";
+import argonyx2 from "../../assets/events/events_photo/argoynx2.webp";
+import desktopTeamBg from "../../assets/events/background/pcTeam.webp";
+import mobileTeamBg from "../../assets/events/background/phone.webp";
 import "./Events.css";
 import Image, { StaticImageData } from "next/image";
 

@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import { gsap, ScrollTrigger } from "../../utils/gsapSetup";
 import { acquireLenis } from "../../utils/lenis";
-import storyBackground from "../../assets/story/lib.png";
+import storyBackground from "../../assets/story/lib.webp";
 import "./Story.css";
 
 export interface StoryProps {
