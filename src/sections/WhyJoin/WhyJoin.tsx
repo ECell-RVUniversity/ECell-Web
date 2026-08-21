@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import { gsap } from "../../utils/gsapSetup";
+import { acquireLenis } from "../../utils/lenis";
 import "./WhyJoin.css";
 
 const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/J0MfKUwIZ6J8WfemIBbdlJ";
@@ -85,14 +86,35 @@ const reasons: JoinReason[] = [
 
 export default function WhyJoin(): React.ReactElement {
   const sectionRef = useRef<HTMLElement | null>(null);
+  const stackRef = useRef<HTMLDivElement | null>(null);
   const cardRefs = useRef<Array<HTMLElement | null>>([]);
+  const dragInfoRef = useRef<{
+    isDragging: boolean;
+    hasMoved: boolean;
+    startY: number;
+    startX: number;
+    startScroll: number;
+    startProgress: number;
+    lastTime: number;
+    velocityY: number;
+  }>({
+    isDragging: false,
+    hasMoved: false,
+    startY: 0,
+    startX: 0,
+    startScroll: 0,
+    startProgress: 0,
+    lastTime: 0,
+    velocityY: 0,
+  });
 
   useEffect(() => {
     const section = sectionRef.current;
+    const stack = stackRef.current;
     const cards = cardRefs.current.filter(
       (card): card is HTMLElement => card !== null
     );
-    if (!section || cards.length !== reasons.length) return;
+    if (!section || !stack || cards.length !== reasons.length) return;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduceMotion) {
@@ -102,8 +124,13 @@ export default function WhyJoin(): React.ReactElement {
       return;
     }
 
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+    const lenisHandle = isMobile ? null : acquireLenis();
+    const lenis = lenisHandle?.instance ?? null;
+
+    let cleanupDrag: (() => void) | null = null;
+
     const context = gsap.context(() => {
-      const isMobile = window.matchMedia("(max-width: 767px)").matches;
       const stackOffset = isMobile ? 18 : 24;
 
       cards.forEach((card, index) => {
@@ -157,9 +184,162 @@ export default function WhyJoin(): React.ReactElement {
             at
           );
       });
+
+      // --- Interactive Left-Mouse Drag Navigation ---
+      const handlePointerDown = (e: PointerEvent) => {
+        if (e.button !== 0) return;
+
+        const st = timeline.scrollTrigger;
+        if (!st) return;
+
+        let effectiveScroll = window.scrollY;
+        if (effectiveScroll < st.start) {
+          effectiveScroll = st.start;
+        } else if (effectiveScroll > st.end) {
+          effectiveScroll = st.end;
+        }
+
+        dragInfoRef.current = {
+          isDragging: true,
+          hasMoved: false,
+          startY: e.clientY,
+          startX: e.clientX,
+          startScroll: effectiveScroll,
+          startProgress: st.progress,
+          lastTime: performance.now(),
+          velocityY: 0,
+        };
+
+        stack.classList.add("is-dragging");
+        try {
+          stack.setPointerCapture(e.pointerId);
+        } catch {}
+      };
+
+      const handlePointerMove = (e: PointerEvent) => {
+        const info = dragInfoRef.current;
+        if (!info.isDragging) return;
+
+        const st = timeline.scrollTrigger;
+        if (!st) return;
+
+        const deltaY = info.startY - e.clientY;
+        const deltaX = info.startX - e.clientX;
+        const distance = deltaY + deltaX * 0.45;
+
+        if (!info.hasMoved && Math.abs(distance) > 5) {
+          info.hasMoved = true;
+        }
+
+        if (!info.hasMoved) return;
+
+        const now = performance.now();
+        const dt = Math.max(1, now - info.lastTime);
+        info.velocityY = deltaY / dt;
+        info.lastTime = now;
+
+        const pinDistance = st.end - st.start;
+        const pixelsPerCard = isMobile ? 180 : 230;
+        const scrollPerDragPixel = pinDistance / (reasons.length - 1) / pixelsPerCard;
+
+        const targetScroll = Math.max(
+          st.start,
+          Math.min(st.end, info.startScroll + distance * scrollPerDragPixel)
+        );
+
+        if (lenis) {
+          lenis.scrollTo(targetScroll, { immediate: true });
+        } else {
+          window.scrollTo({ top: targetScroll, behavior: "instant" as ScrollBehavior });
+        }
+        st.scroll(targetScroll);
+        st.update();
+      };
+
+      const handlePointerUp = (e: PointerEvent) => {
+        const info = dragInfoRef.current;
+        if (!info.isDragging) return;
+
+        info.isDragging = false;
+        stack.classList.remove("is-dragging");
+
+        try {
+          if (stack.hasPointerCapture(e.pointerId)) {
+            stack.releasePointerCapture(e.pointerId);
+          }
+        } catch {}
+
+        if (!info.hasMoved) return;
+
+        const st = timeline.scrollTrigger;
+        if (!st) return;
+
+        const currentProgress = st.progress;
+        const totalCards = reasons.length - 1;
+        const exactIndex = currentProgress * totalCards;
+
+        let targetIndex: number;
+        const deltaY = info.startY - e.clientY;
+
+        if (Math.abs(deltaY) > 28 || Math.abs(info.velocityY) > 0.3) {
+          if (deltaY > 0 || info.velocityY > 0.15) {
+            targetIndex = Math.min(totalCards, Math.ceil(exactIndex));
+            if (targetIndex <= Math.floor(info.startProgress * totalCards)) {
+              targetIndex = Math.min(totalCards, targetIndex + 1);
+            }
+          } else {
+            targetIndex = Math.max(0, Math.floor(exactIndex));
+            if (targetIndex >= Math.ceil(info.startProgress * totalCards)) {
+              targetIndex = Math.max(0, targetIndex - 1);
+            }
+          }
+        } else {
+          targetIndex = Math.round(exactIndex);
+        }
+
+        const targetScroll = st.start + (targetIndex / totalCards) * (st.end - st.start);
+
+        if (lenis) {
+          lenis.scrollTo(targetScroll, {
+            duration: 0.65,
+            easing: (t: number) => 1 - Math.pow(1 - t, 3),
+          });
+        } else {
+          gsap.to(window, {
+            scrollTo: targetScroll,
+            duration: 0.55,
+            ease: "power2.out",
+          });
+        }
+      };
+
+      const handleClickCapture = (e: MouseEvent) => {
+        if (dragInfoRef.current.hasMoved) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      };
+
+      stack.addEventListener("pointerdown", handlePointerDown);
+      window.addEventListener("pointermove", handlePointerMove);
+      window.addEventListener("pointerup", handlePointerUp);
+      window.addEventListener("pointercancel", handlePointerUp);
+      stack.addEventListener("click", handleClickCapture, true);
+
+      cleanupDrag = () => {
+        stack.removeEventListener("pointerdown", handlePointerDown);
+        window.removeEventListener("pointermove", handlePointerMove);
+        window.removeEventListener("pointerup", handlePointerUp);
+        window.removeEventListener("pointercancel", handlePointerUp);
+        stack.removeEventListener("click", handleClickCapture, true);
+      };
     }, section);
 
-    return () => context.revert();
+    return () => {
+      cleanupDrag?.();
+      context.revert();
+      lenisHandle?.release();
+    };
   }, []);
 
   return (
@@ -167,10 +347,10 @@ export default function WhyJoin(): React.ReactElement {
       <div className="why-join__intro wrap">
         <p className="why-join__eyebrow">Why join ECell</p>
         <h2>Make your college years count.</h2>
-        <p className="why-join__hint">Scroll to explore</p>
+        <p className="why-join__hint">Scroll or drag cards to explore</p>
       </div>
 
-      <div className="why-join__stack" aria-label="Reasons to join ECell">
+      <div ref={stackRef} className="why-join__stack" aria-label="Reasons to join ECell">
         {reasons.map((reason, index) => (
           <article
             key={reason.number}
