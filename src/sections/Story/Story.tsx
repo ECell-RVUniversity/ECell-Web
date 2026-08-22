@@ -23,7 +23,7 @@ function renderJigglyText(text: string, keyPrefix: string): React.ReactNode {
     >
       {word.split("").map((char, charIdx) => (
         <span
-          key={`${keyPrefix}-c-${charIdx}`}
+          key={`${keyPrefix}-w-${wordIdx}-c-${charIdx}`}
           className="jiggle-char"
           style={{ display: "inline-block", willChange: "transform" }}
         >
@@ -48,6 +48,7 @@ export default function Story({
   const imagePanelRef = useRef<HTMLDivElement | null>(null);
   const imageRef = useRef<HTMLDivElement | null>(null);
   const revealTextInnerRef = useRef<HTMLDivElement | null>(null);
+  const storyRevealTextRef = useRef<HTMLDivElement | null>(null);
   const eyebrowRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -55,6 +56,7 @@ export default function Story({
     const imagePanel = imagePanelRef.current;
     const image = imageRef.current;
     const revealTextInner = revealTextInnerRef.current;
+    const storyRevealText = storyRevealTextRef.current;
     const eyebrowEl = eyebrowRef.current;
 
     if (!reveal || !imagePanel || !revealTextInner) return;
@@ -72,7 +74,7 @@ export default function Story({
         filter: "blur(0px)",
       });
       if (image) gsap.set(image, { scale: 1 });
-      gsap.set(".story-reveal-text", { opacity: 0 });
+      if (storyRevealText) gsap.set(storyRevealText, { opacity: 0 });
       return;
     }
 
@@ -102,7 +104,7 @@ export default function Story({
         const textWidth = revealTextInner.scrollWidth;
 
         gsap.set(revealTextInner, { x: containerWidth });
-        gsap.set(".story-reveal-text", { opacity: 0 });
+        if (storyRevealText) gsap.set(storyRevealText, { opacity: 0 });
 
         gsap.set(imagePanel, {
           x: "100%",
@@ -253,20 +255,23 @@ export default function Story({
           );
         }
 
+        if (storyRevealText) {
+          tl.to(
+            storyRevealText,
+            { opacity: 1, duration: 0.15, ease: "power1.out" },
+            0.6
+          );
+        }
+
         tl.to(
-          ".story-reveal-text",
-          { opacity: 1, duration: 0.15, ease: "power1.out" },
+          revealTextInner,
+          {
+            x: -(textWidth + 250),
+            duration: 1.6,
+            ease: "none",
+          },
           0.6
         )
-          .to(
-            revealTextInner,
-            {
-              x: -(textWidth + 250),
-              duration: 1.6,
-              ease: "none",
-            },
-            0.6
-          )
           .fromTo(
             eyebrowEl,
             { opacity: 0, y: 10 },
@@ -277,12 +282,15 @@ export default function Story({
             eyebrowEl,
             { opacity: 0, y: -10, duration: 0.2, ease: "power1.in" },
             1.95
-          )
-          .to(
-            ".story-reveal-text",
+          );
+
+        if (storyRevealText) {
+          tl.to(
+            storyRevealText,
             { opacity: 0, duration: 0.15, ease: "power1.in" },
             2.08
           );
+        }
 
         tl.to(
           imagePanel,
@@ -329,13 +337,13 @@ export default function Story({
   return (
     <section className="story-reveal" ref={revealRef} id="storyReveal">
       <div className="story-image-panel" ref={imagePanelRef} id="imagePanel">
-        <div ref={imageRef} className="story-image-inner">
+        <div ref={imageRef} className="story-image-inner" style={{ position: "relative", width: "100%", height: "100%" }}>
           <Image src={storyBackground} alt="Story background" fill sizes="100vw" quality={100} style={{ objectFit: "cover" }} />
         </div>
         <div className="grain"></div>
       </div>
 
-      <div className="story-reveal-text">
+      <div className="story-reveal-text" ref={storyRevealTextRef}>
         <div className="eyebrow" ref={eyebrowRef}>
           {renderJigglyText(eyebrow, "eyebrow")}
         </div>

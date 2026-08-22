@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { gsap } from "../../utils/gsapSetup";
+import LaserFlow from "../../components/LaserFlow";
 import "./WhatsAppCommunity.css";
 
 // this is the url for the whatsapp student community.
@@ -133,10 +133,6 @@ const timeNow = (): string => new Intl.DateTimeFormat("en-IN", {
 
 export default function WhatsAppCommunity(): React.ReactElement {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const cursorFieldRef = useRef<HTMLDivElement | null>(null);
-  const wipeBarRef = useRef<HTMLDivElement | null>(null);
-  const bloomRef = useRef<HTMLDivElement | null>(null);
-  const rafIdRef = useRef<number | null>(null);
   const replyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -152,89 +148,15 @@ export default function WhatsAppCommunity(): React.ReactElement {
     return () => cancelAnimationFrame(frame);
   }, []);
 
-  const handleSectionPointerMove = (event: React.PointerEvent<HTMLElement>) => {
-    if (!window.matchMedia("(pointer: fine)").matches) return;
-
-    const field = cursorFieldRef.current;
-    const section = event.currentTarget;
-    if (!field || !section) return;
-
-    const clientX = event.clientX;
-    const clientY = event.clientY;
-
-    const bounds = section.getBoundingClientRect();
-    const x = clientX - bounds.left;
-    const y = clientY - bounds.top;
-    const icons = field.children;
-
-    field.style.setProperty("--cursor-x", `${x}px`);
-    field.style.setProperty("--cursor-y", `${y}px`);
-
-    Array.from(icons).forEach((icon, index) => {
-      const htmlIcon = icon as HTMLElement;
-      const angle = ((index * 137.5) - 30) * (Math.PI / 180);
-      const radius = 58 + (index % 4) * 32;
-      const targetX = x + Math.cos(angle) * radius;
-      const targetY = y + Math.sin(angle) * radius;
-
-      const baseScale = index % 4 === 3 ? 1.12 : index % 3 === 0 ? 0.77 : 1;
-      const baseOpacity = index % 4 === 3 ? 0.38 : 1;
-
-      gsap.to(htmlIcon, {
-        x: targetX,
-        y: targetY,
-        scale: baseScale,
-        opacity: baseOpacity,
-        rotate: index * 12,
-        duration: 0.42 + (index % 5) * 0.08,
-        ease: "power2.out",
-        overwrite: "auto"
-      });
-    });
-
-    field.classList.add("is-active");
-  };
-
-  const handleSectionPointerLeave = () => {
-    const field = cursorFieldRef.current;
-    if (!field) return;
-
-    field.classList.remove("is-active");
-    const icons = field.children;
-    Array.from(icons).forEach((icon) => {
-      const htmlIcon = icon as HTMLElement;
-      gsap.to(htmlIcon, {
-        scale: 0,
-        opacity: 0,
-        duration: 0.4,
-        ease: "power2.inOut",
-        overwrite: "auto"
-      });
-    });
-  };
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const ctx = gsap.context(() => {
-      // ── Ambient Green Bloom ──
-      if (bloomRef.current) {
-        gsap.to(bloomRef.current, {
-          scale: 1.15,
-          opacity: 0.85,
-          duration: 1.2,
-          ease: "power2.out",
-        });
-      }
-    }, section);
-
-    return () => ctx.revert();
-  }, []);
-
   useEffect(() => {
     const messageList = messagesRef.current;
-    if (messageList) messageList.scrollTo({ top: messageList.scrollHeight, behavior: "smooth" });
+    if (messageList) {
+      if (typeof messageList.scrollTo === "function") {
+        messageList.scrollTo({ top: messageList.scrollHeight, behavior: "smooth" });
+      } else {
+        messageList.scrollTop = messageList.scrollHeight;
+      }
+    }
   }, [messages, isTyping]);
 
   useEffect(() => () => {
@@ -284,33 +206,18 @@ export default function WhatsAppCommunity(): React.ReactElement {
       className="whatsapp-community"
       id="community"
       aria-labelledby="community-heading"
-      onPointerMove={handleSectionPointerMove}
-      onPointerLeave={handleSectionPointerLeave}
     >
       {isDecorativeReady && (
-        <>
-          {/* Transitions: Top light wipe bar & ambient green bloom */}
-          <div ref={wipeBarRef} className="section-wipe-bar" aria-hidden="true" />
-          <div ref={bloomRef} className="section-bloom section-bloom--green" aria-hidden="true" />
-
-          <div className="whatsapp-community-orb whatsapp-community-orb-one" aria-hidden="true" />
-          <div className="whatsapp-community-orb whatsapp-community-orb-two" aria-hidden="true" />
-          <div ref={cursorFieldRef} className="whatsapp-community-cursor-field" aria-hidden="true">
-            {Array.from({ length: 14 }, (_, index) => (
-              <span className="whatsapp-community-cursor-icon" key={index}>
-                {index % 3 === 0 ? (
-                  <svg viewBox="0 0 24 24"><path d="M19.1 4.9A9.72 9.72 0 0 0 3.72 16.62L2.5 21.5l5-1.18A9.72 9.72 0 0 0 19.1 4.9ZM12 19.8a7.79 7.79 0 0 1-3.97-1.09l-.28-.16-2.97.7.72-2.89-.18-.3A7.8 7.8 0 1 1 12 19.8Zm4.27-5.84c-.23-.12-1.38-.68-1.59-.75-.21-.08-.36-.12-.51.12s-.59.75-.72.9c-.13.16-.26.18-.49.06a6.34 6.34 0 0 1-1.86-1.15 6.95 6.95 0 0 1-1.28-1.6c-.13-.23-.01-.35.1-.47.1-.1.23-.26.34-.39.11-.13.15-.23.23-.38.08-.16.04-.29-.02-.41-.06-.12-.51-1.22-.7-1.67-.18-.44-.37-.38-.51-.39h-.44c-.15 0-.4.06-.61.29s-.8.78-.8 1.9.82 2.2.93 2.36c.12.16 1.62 2.47 3.93 3.47.55.24.98.38 1.31.49.55.17 1.05.15 1.44.09.44-.07 1.38-.56 1.57-1.1.19-.54.19-1 .13-1.1-.06-.1-.21-.16-.44-.28Z" /></svg>
-                ) : index % 3 === 1 ? (
-                  <svg viewBox="0 0 24 24"><path d="M20 3H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4l4 3 4-3h4a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm-3 9H7V10h10v2Zm0-4H7V6h10v2Z" /></svg>
-                ) : (
-                  <svg viewBox="0 0 24 24"><path d="M16 11a4 4 0 1 0-3.95-4.65A5.5 5.5 0 0 1 15 11h1ZM8 11a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm8 2c-1.04 0-2.04.18-2.97.52A6.9 6.9 0 0 1 15 18.5c0 .52-.06 1.02-.17 1.5H22v-2c0-2.76-2.24-5-5-5ZM8 13c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4Z" /></svg>
-                )}
-              </span>
-            ))}
-          </div>
-        </>
+        <div className="whatsapp-community-ambient-glow" aria-hidden="true" />
       )}
-      <div className="wrap">
+      <div className="wrap whatsapp-community-wrap">
+        <div className="whatsapp-laser-header" aria-hidden="true">
+          <LaserFlow
+            horizontalBeamOffset={0.1}
+            verticalBeamOffset={0.0}
+            color="#8EDCFF"
+          />
+        </div>
         <div className="whatsapp-community-card">
           <div className="whatsapp-community-copy">
             <span className="whatsapp-community-eyebrow">
