@@ -211,27 +211,13 @@ export default function WhatsAppCommunity(): React.ReactElement {
         <div className="whatsapp-community-ambient-glow" aria-hidden="true" />
       )}
       <div className="wrap whatsapp-community-wrap">
-        {isDecorativeReady && (
-          <div className="whatsapp-laser-header" aria-hidden="true">
-            <LaserFlow
-              horizontalBeamOffset={0.0}
-              verticalBeamOffset={0.0}
-              horizontalSizing={0.5}
-              verticalSizing={2.4}
-              wispDensity={1.5}
-              wispSpeed={12.0}
-              wispIntensity={7.0}
-              flowSpeed={0.33}
-              flowStrength={0.08}
-              fogIntensity={0.20}
-              fogScale={0.21}
-              fogFallSpeed={0.04}
-              decay={2.85}
-              falloffStart={0.65}
-              color="#8EDCFF"
-            />
-          </div>
-        )}
+        <div className="whatsapp-laser-header" aria-hidden="true">
+          <LaserFlow
+            horizontalBeamOffset={0.1}
+            verticalBeamOffset={0.0}
+            color="#8EDCFF"
+          />
+        </div>
         <div className="whatsapp-community-card">
           <div className="whatsapp-community-copy">
             <span className="whatsapp-community-eyebrow">

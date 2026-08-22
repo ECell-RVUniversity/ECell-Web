@@ -75,7 +75,7 @@ uniform float uFade;
 #define R_H 150.0
 #define R_V 150.0
 #define FLARE_HEIGHT 16.0
-#define FLARE_AMOUNT 0.0
+#define FLARE_AMOUNT 8.0
 #define FLARE_EXP 2.0
 #define TOP_FADE_START 0.1
 #define TOP_FADE_EXP 1.0
@@ -83,18 +83,18 @@ uniform float uFade;
 #define FLOW_SHARPNESS 1.5
 
 // Wisps (animated micro-streaks) that travel along the beam
-#define W_BASE_X 1.2
-#define W_LAYER_GAP 0.20
-#define W_LANES 12
+#define W_BASE_X 1.5
+#define W_LAYER_GAP 0.25
+#define W_LANES 10
 #define W_SIDE_DECAY 0.5
 #define W_HALF 0.01
 #define W_AA 0.15
-#define W_CELL 18.0
+#define W_CELL 20.0
 #define W_SEG_MIN 0.01
-#define W_SEG_MAX 0.60
-#define W_CURVE_AMOUNT 20.0
-#define W_CURVE_RANGE 14.0
-#define W_BOTTOM_EXP 3.5
+#define W_SEG_MAX 0.55
+#define W_CURVE_AMOUNT 15.0
+#define W_CURVE_RANGE (FLARE_HEIGHT - 3.0)
+#define W_BOTTOM_EXP 10.0
 
 // Volumetric fog controls
 #define FOG_ON 1
@@ -161,7 +161,7 @@ uniform float uFade;
     int lanes=int(max(1.0,lanesF));
     float sp=min(d,1.0),ep=max(d-1.0,0.0);
     float fm=flareY(max(y,0.0)),rm=clamp(1.0-(y/max(W_CURVE_RANGE,EPS)),0.0,1.0),cm=fm*rm;
-    const float G=0.06; float xS=1.0+(W_CURVE_AMOUNT*G)*cm;
+    const float G=0.05; float xS=1.0+(FLARE_AMOUNT*W_CURVE_AMOUNT*G)*cm;
     float sPix=clamp(y/R_V,0.0,1.0),bGain=pow(1.0-sPix,W_BOTTOM_EXP),sum=0.0;
     for(int s=0;s<2;++s){
         float sgn=s==0?-1.0:1.0;
@@ -188,12 +188,11 @@ void mainImage(out vec4 fc,in vec2 frag){
     float a=0.0,b=0.0;
     float basePhase=1.5*PI+uDecay*.5; float tauMin=basePhase-uDecay; float tauMax=basePhase;
     float cx=clamp(uvc.x/(R_H*uHLenFactor),-1.0,1.0),tH=clamp(TWO_PI-acos(cx),tauMin,tauMax);
-    vec2 sigH = vec2(1.0, 0.42);
     for(int k=-TAP_RADIUS;k<=TAP_RADIUS;++k){
         float tu=tH+float(k)*DT_LOCAL,wt=tauWf(tu,tauMin,tauMax); if(wt<=0.0) continue;
         float spd=max(abs(sin(tu)),0.02),u=clamp((basePhase-tu)/max(uDecay,EPS),0.0,1.0),env=pow(1.0-abs(u*2.0-1.0),0.8);
         vec2 p=vec2((R_H*uHLenFactor)*cos(tu),0.0);
-        a+=wt*bsa(uvc,p,env*spd,sigH);
+        a+=wt*bs(uvc,p,env*spd);
     }
     float yPix=uvc.y,cy=clamp(-yPix/(R_V*uVLenFactor),-1.0,1.0),tV=clamp(TWO_PI-acos(cy),tauMin,tauMax);
     for(int k=-TAP_RADIUS;k<=TAP_RADIUS;++k){
@@ -246,9 +245,9 @@ void mainImage(out vec4 fc,in vec2 frag){
 #endif
     float LF=L+fog;
     float dith=(h21(frag)-0.5)*(DITHER_STRENGTH/255.0);
-    float tone=g(LF+w)*0.72;
+    float tone=g(LF+w);
     vec3 col=tone*uColor+dith;
-    float alpha=clamp(g(L+w*0.6)*0.85+dith*0.6,0.0,1.0);
+    float alpha=clamp(g(L+w*0.6)+dith*0.6,0.0,1.0);
     float nxE=abs((frag.x-C.x)*invW),xF=pow(clamp(1.0-smoothstep(EDGE_X0,EDGE_X1,nxE),0.0,1.0),EDGE_X_GAMMA);
     float scene=LF+max(0.0,w)*0.5,hi=smoothstep(EDGE_LUMA_T0,EDGE_LUMA_T1,scene);
     float eM=mix(xF,1.0,hi);
@@ -320,7 +319,7 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
     try {
       renderer = new THREE.WebGLRenderer({
         antialias: false,
-        alpha: true,
+        alpha: false,
         depth: false,
         stencil: false,
         powerPreference: 'high-performance',
@@ -330,10 +329,8 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
         logarithmicDepthBuffer: false
       });
     } catch {
-      // Gracefully exit if WebGL is unavailable
       return;
     }
-
     rendererRef.current = renderer;
 
     baseDprRef.current = Math.min(dpr ?? (typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1), 2);
@@ -342,7 +339,7 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
     renderer.setPixelRatio(currentDprRef.current);
     renderer.shadowMap.enabled = false;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.setClearColor(0x000000, 0);
+    renderer.setClearColor(0x000000, 1);
     const canvas = renderer.domElement;
     canvas.style.width = '100%';
     canvas.style.height = '100%';
@@ -355,7 +352,6 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([-1, -1, 0, 3, -1, 0, -1, 3, 0]), 3));
 
-    const initialColorRGB = hexToRGB(color || '#FFFFFF');
     const uniforms = {
       iTime: { value: 0 },
       iResolution: { value: new THREE.Vector3(1, 1, 1) },
@@ -377,8 +373,8 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
       uDecay: { value: decay },
       uFalloffStart: { value: falloffStart },
       uFogFallSpeed: { value: fogFallSpeed },
-      uColor: { value: new THREE.Vector3(initialColorRGB.r, initialColorRGB.g, initialColorRGB.b) },
-      uFade: { value: 1.0 }
+      uColor: { value: new THREE.Vector3(1, 1, 1) },
+      uFade: { value: hasFadedRef.current ? 1 : 0 }
     };
     uniformsRef.current = uniforms;
 
@@ -386,19 +382,19 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
       vertexShader: VERT,
       fragmentShader: FRAG,
       uniforms,
-      transparent: true,
+      transparent: false,
       depthTest: false,
       depthWrite: false,
-      blending: THREE.AdditiveBlending
+      blending: THREE.NormalBlending
     });
 
     const mesh = new THREE.Mesh(geometry, material);
     mesh.frustumCulled = false;
     scene.add(mesh);
 
-    const clock = new THREE.Clock();
+    const startTime = performance.now();
     let prevTime = 0;
-    let fade = 1.0;
+    let fade = hasFadedRef.current ? 1 : 0;
 
     const mouseTarget = new THREE.Vector2(0, 0);
     const mouseSmooth = new THREE.Vector2(0, 0);
@@ -439,7 +435,16 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
       ro.observe(mount);
     }
 
-    inViewRef.current = true;
+    let io: IntersectionObserver | null = null;
+    if (typeof IntersectionObserver !== 'undefined') {
+      io = new IntersectionObserver(
+        entries => {
+          inViewRef.current = entries[0]?.isIntersecting ?? true;
+        },
+        { root: null, threshold: 0 }
+      );
+      io.observe(mount);
+    }
 
     const onVis = () => {
       pausedRef.current = typeof document !== 'undefined' ? document.hidden : false;
@@ -516,9 +521,9 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
 
     const animate = () => {
       raf = requestAnimationFrame(animate);
-      if (pausedRef.current) return;
+      if (pausedRef.current || !inViewRef.current) return;
 
-      const t = clock.getElapsedTime();
+      const t = (performance.now() - startTime) / 1000;
       const dt = Math.max(0, t - prevTime);
       prevTime = t;
 
@@ -533,6 +538,13 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
       (uniforms.uFlowTime.value as number) += cdt;
       (uniforms.uFogTime.value as number) += cdt;
 
+      if (!hasFadedRef.current) {
+        const fadeDur = 1.0;
+        fade = Math.min(1, fade + cdt / fadeDur);
+        uniforms.uFade.value = fade;
+        if (fade >= 1) hasFadedRef.current = true;
+      }
+
       const tau = Math.max(1e-3, mouseSmoothTime);
       const alpha = 1 - Math.exp(-cdt / tau);
       mouseSmooth.lerp(mouseTarget, alpha);
@@ -540,7 +552,7 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
 
       renderer.render(scene, camera);
 
-      adjustDprIfNeeded(typeof performance !== 'undefined' ? performance.now() : 0);
+      adjustDprIfNeeded(performance.now());
     };
 
     animate();
@@ -549,6 +561,7 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
       cancelAnimationFrame(raf);
       if (resizeRaf) cancelAnimationFrame(resizeRaf);
       ro?.disconnect();
+      io?.disconnect();
       if (typeof document !== 'undefined') {
         document.removeEventListener('visibilitychange', onVis);
       }
