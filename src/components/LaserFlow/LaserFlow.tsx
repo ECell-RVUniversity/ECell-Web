@@ -75,7 +75,7 @@ uniform float uFade;
 #define R_H 150.0
 #define R_V 150.0
 #define FLARE_HEIGHT 16.0
-#define FLARE_AMOUNT 8.0
+#define FLARE_AMOUNT 0.0
 #define FLARE_EXP 2.0
 #define TOP_FADE_START 0.1
 #define TOP_FADE_EXP 1.0
@@ -83,18 +83,18 @@ uniform float uFade;
 #define FLOW_SHARPNESS 1.5
 
 // Wisps (animated micro-streaks) that travel along the beam
-#define W_BASE_X 1.5
-#define W_LAYER_GAP 0.25
-#define W_LANES 10
+#define W_BASE_X 1.2
+#define W_LAYER_GAP 0.20
+#define W_LANES 12
 #define W_SIDE_DECAY 0.5
 #define W_HALF 0.01
 #define W_AA 0.15
-#define W_CELL 20.0
+#define W_CELL 18.0
 #define W_SEG_MIN 0.01
-#define W_SEG_MAX 0.55
-#define W_CURVE_AMOUNT 15.0
-#define W_CURVE_RANGE (FLARE_HEIGHT - 3.0)
-#define W_BOTTOM_EXP 10.0
+#define W_SEG_MAX 0.60
+#define W_CURVE_AMOUNT 20.0
+#define W_CURVE_RANGE 14.0
+#define W_BOTTOM_EXP 3.5
 
 // Volumetric fog controls
 #define FOG_ON 1
@@ -161,7 +161,7 @@ uniform float uFade;
     int lanes=int(max(1.0,lanesF));
     float sp=min(d,1.0),ep=max(d-1.0,0.0);
     float fm=flareY(max(y,0.0)),rm=clamp(1.0-(y/max(W_CURVE_RANGE,EPS)),0.0,1.0),cm=fm*rm;
-    const float G=0.05; float xS=1.0+(FLARE_AMOUNT*W_CURVE_AMOUNT*G)*cm;
+    const float G=0.06; float xS=1.0+(W_CURVE_AMOUNT*G)*cm;
     float sPix=clamp(y/R_V,0.0,1.0),bGain=pow(1.0-sPix,W_BOTTOM_EXP),sum=0.0;
     for(int s=0;s<2;++s){
         float sgn=s==0?-1.0:1.0;
@@ -188,11 +188,12 @@ void mainImage(out vec4 fc,in vec2 frag){
     float a=0.0,b=0.0;
     float basePhase=1.5*PI+uDecay*.5; float tauMin=basePhase-uDecay; float tauMax=basePhase;
     float cx=clamp(uvc.x/(R_H*uHLenFactor),-1.0,1.0),tH=clamp(TWO_PI-acos(cx),tauMin,tauMax);
+    vec2 sigH = vec2(1.0, 0.42);
     for(int k=-TAP_RADIUS;k<=TAP_RADIUS;++k){
         float tu=tH+float(k)*DT_LOCAL,wt=tauWf(tu,tauMin,tauMax); if(wt<=0.0) continue;
         float spd=max(abs(sin(tu)),0.02),u=clamp((basePhase-tu)/max(uDecay,EPS),0.0,1.0),env=pow(1.0-abs(u*2.0-1.0),0.8);
         vec2 p=vec2((R_H*uHLenFactor)*cos(tu),0.0);
-        a+=wt*bs(uvc,p,env*spd);
+        a+=wt*bsa(uvc,p,env*spd,sigH);
     }
     float yPix=uvc.y,cy=clamp(-yPix/(R_V*uVLenFactor),-1.0,1.0),tV=clamp(TWO_PI-acos(cy),tauMin,tauMax);
     for(int k=-TAP_RADIUS;k<=TAP_RADIUS;++k){
@@ -245,9 +246,9 @@ void mainImage(out vec4 fc,in vec2 frag){
 #endif
     float LF=L+fog;
     float dith=(h21(frag)-0.5)*(DITHER_STRENGTH/255.0);
-    float tone=g(LF+w);
+    float tone=g(LF+w)*0.72;
     vec3 col=tone*uColor+dith;
-    float alpha=clamp(g(L+w*0.6)+dith*0.6,0.0,1.0);
+    float alpha=clamp(g(L+w*0.6)*0.85+dith*0.6,0.0,1.0);
     float nxE=abs((frag.x-C.x)*invW),xF=pow(clamp(1.0-smoothstep(EDGE_X0,EDGE_X1,nxE),0.0,1.0),EDGE_X_GAMMA);
     float scene=LF+max(0.0,w)*0.5,hi=smoothstep(EDGE_LUMA_T0,EDGE_LUMA_T1,scene);
     float eM=mix(xF,1.0,hi);

@@ -13,17 +13,6 @@
   will-change: transform, opacity;
 }
 
-.whatsapp-community::before {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: min(86vw, 1040px);
-  height: 1px;
-  content: "";
-  transform: translateX(-50%);
-  background: linear-gradient(90deg, transparent, rgba(142, 220, 255, 0.5), transparent);
-}
-
 .whatsapp-community-ambient-glow {
   position: absolute;
   top: 15%;
@@ -32,7 +21,7 @@
   width: min(90vw, 800px);
   height: 400px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(142, 220, 255, 0.09), transparent 70%);
+  background: radial-gradient(circle, rgba(142, 220, 255, 0.05), transparent 70%);
   filter: blur(60px);
   pointer-events: none;
   z-index: 0;
@@ -129,15 +118,12 @@
   grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
   min-height: 520px;
   overflow: hidden;
-  border: 1px solid rgba(142, 220, 255, 0.45);
+  border: 1px solid rgba(142, 220, 255, 0.35);
   border-radius: 30px;
   background: linear-gradient(145deg, #141518 0%, #0d0e10 65%, #0e141a 100%);
   box-shadow: 
-    0 30px 90px rgba(0, 0, 0, 0.7),
-    0 0 35px rgba(142, 220, 255, 0.22),
-    0 0 70px rgba(142, 220, 255, 0.1),
-    inset 0 1px 0 rgba(142, 220, 255, 0.6),
-    inset 0 0 20px rgba(142, 220, 255, 0.08);
+    0 30px 90px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
   transition: border-color 260ms ease, box-shadow 260ms ease, transform 260ms ease;
 }
 

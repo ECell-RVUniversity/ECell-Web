@@ -216,18 +216,18 @@ export default function WhatsAppCommunity(): React.ReactElement {
             <LaserFlow
               horizontalBeamOffset={0.0}
               verticalBeamOffset={0.0}
-              verticalSizing={3.0}
               horizontalSizing={0.5}
-              wispDensity={1.6}
-              wispSpeed={11.5}
-              wispIntensity={9.1}
+              verticalSizing={2.4}
+              wispDensity={1.5}
+              wispSpeed={12.0}
+              wispIntensity={7.0}
               flowSpeed={0.33}
               flowStrength={0.08}
-              fogIntensity={0.27}
+              fogIntensity={0.20}
               fogScale={0.21}
               fogFallSpeed={0.04}
-              decay={1.1}
-              falloffStart={1.2}
+              decay={2.85}
+              falloffStart={0.65}
               color="#8EDCFF"
             />
           </div>
