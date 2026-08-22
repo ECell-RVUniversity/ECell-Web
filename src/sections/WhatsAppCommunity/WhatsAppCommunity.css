@@ -118,15 +118,29 @@
   grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
   min-height: 520px;
   overflow: hidden;
-  border: 1px solid rgba(142, 220, 255, 0.35);
+  border: 5px solid transparent;
   border-radius: 30px;
-  background: linear-gradient(145deg, #141518 0%, #0d0e10 65%, #0e141a 100%);
-  box-shadow: 
+  background:
+    linear-gradient(145deg, #141518 0%, #0d0e10 65%, #0e141a 100%) padding-box,
+    linear-gradient(
+      180deg,
+      rgba(142, 220, 255, 1.0) 0%,
+      rgba(142, 220, 255, 0.7) 8%,
+      rgba(142, 220, 255, 0.4) 20%,
+      rgba(142, 220, 255, 0.2) 40%,
+      rgba(142, 220, 255, 0.08) 70%,
+      rgba(142, 220, 255, 0.04) 100%
+    ) border-box;
+  box-shadow:
     0 30px 90px rgba(0, 0, 0, 0.65),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    0 -8px 40px rgba(142, 220, 255, 0.12),
+    0 -4px 20px rgba(142, 220, 255, 0.08),
+    inset 0 1px 0 rgba(142, 220, 255, 0.4),
+    inset 0 0 20px rgba(142, 220, 255, 0.03);
   transition: border-color 260ms ease, box-shadow 260ms ease, transform 260ms ease;
 }
 
+/* Dot pattern overlay */
 .whatsapp-community-card::before {
   position: absolute;
   inset: 0;
@@ -137,27 +151,40 @@
   pointer-events: none;
 }
 
+/* Beam impact glow — radiates from top center where the beam hits */
 .whatsapp-community-card::after {
   position: absolute;
-  right: -220px;
-  bottom: -280px;
-  width: 520px;
-  height: 520px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(142, 220, 255, 0.14), transparent 68%);
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  height: 180px;
+  border-radius: 0 0 50% 50%;
+  background: radial-gradient(
+    ellipse 160px 90px at 50% 0%,
+    rgba(142, 220, 255, 0.25) 0%,
+    rgba(142, 220, 255, 0.12) 30%,
+    rgba(142, 220, 255, 0.04) 60%,
+    transparent 100%
+  );
   content: "";
-  filter: blur(8px);
   pointer-events: none;
+  animation: beam-impact-pulse 3s ease-in-out infinite;
+}
+
+@keyframes beam-impact-pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
 }
 
 .whatsapp-community-card:hover {
-  border-color: rgba(142, 220, 255, 0.75);
-  box-shadow: 
+  box-shadow:
     0 35px 100px rgba(0, 0, 0, 0.75),
-    0 0 50px rgba(142, 220, 255, 0.35),
-    0 0 100px rgba(142, 220, 255, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    inset 0 0 30px rgba(142, 220, 255, 0.14);
+    0 -10px 60px rgba(142, 220, 255, 0.2),
+    0 -4px 24px rgba(142, 220, 255, 0.15),
+    0 0 50px rgba(142, 220, 255, 0.1),
+    inset 0 1px 0 rgba(142, 220, 255, 0.6),
+    inset 0 0 30px rgba(142, 220, 255, 0.06);
 }
 
 .whatsapp-community-copy {
