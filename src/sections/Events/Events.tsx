@@ -318,8 +318,8 @@ export default function Events(): React.ReactElement {
   return (
     <section className="events-section" ref={sectionRef} id="eventsSection">
       {/* Background image panel — flies in from top-right */}
-      <div className="events-bg-panel" ref={bgPanelRef}>
-        <div className="events-bg-inner" ref={bgInnerRef}>
+      <div className="events-bg-panel" ref={bgPanelRef} style={{ position: "absolute" }}>
+        <div className="events-bg-inner" ref={bgInnerRef} style={{ position: "relative", width: "100%", height: "100%" }}>
           <Image
             className="events-bg-desktop"
             src={desktopTeamBg}
@@ -362,6 +362,7 @@ export default function Events(): React.ReactElement {
                 key={idx}
                 className="events-gallery-item"
                 data-caption={item.caption}
+                style={{ position: "absolute" }}
                 ref={(el) => {
                   itemsRef.current[idx] = el;
                 }}

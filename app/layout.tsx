@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Archivo, Bebas_Neue, Fraunces, Inter } from "next/font/google";
+import Script from "next/script";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import "./globals.css";
@@ -31,6 +32,10 @@ const inter = Inter({
 });
 
 const SITE_URL = "https://ecell-rvu.vercel.app";
+
+export const viewport: Viewport = {
+  themeColor: "#000000",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -201,54 +206,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
-      <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="/favicon-16x16.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="/favicon-32x32.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="48x48"
-          href="/favicon-48x48.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="96x96"
-          href="/favicon-96x96.png"
-        />
-        <link rel="shortcut icon" href="/favicon-48x48.png" />
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/apple-touch-icon.png"
-        />
-        <meta name="theme-color" content="#000000" />
-        <meta property="og:image" content={`${SITE_URL}/og-image.png`} />
-        <meta
-          property="og:image:secure_url"
-          content={`${SITE_URL}/og-image.png`}
-        />
-        <meta property="og:image:type" content="image/png" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content="ECell RV University" />
-        <script
+      <body
+        className={`${archivo.variable} ${bebasNeue.variable} ${fraunces.variable} ${inter.variable}`}
+        suppressHydrationWarning
+      >
+        <Script
+          id="json-ld"
           type="application/ld+json"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <script
+        <Script
+          id="scroll-restoration"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               if (typeof window !== 'undefined') {
@@ -263,11 +233,6 @@ export default function RootLayout({
             `,
           }}
         />
-      </head>
-      <body
-        className={`${archivo.variable} ${bebasNeue.variable} ${fraunces.variable} ${inter.variable}`}
-        suppressHydrationWarning
-      >
         {children}
         <Analytics />
         <SpeedInsights />

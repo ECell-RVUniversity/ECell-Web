@@ -432,7 +432,7 @@ export default function Speakers(): React.ReactElement {
             >
               {/* Left Column: Portrait & Live Badges */}
               <div className="spotlight-left-column">
-                <div className="spotlight-photo-frame">
+                <div className="spotlight-photo-frame" style={{ position: "relative" }}>
                   <Image
                     className="spotlight-photo"
                     src={currentSpeaker.photo}
