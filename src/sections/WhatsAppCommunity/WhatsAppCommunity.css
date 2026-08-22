@@ -1,7 +1,11 @@
 .whatsapp-community {
   position: relative;
   overflow: hidden;
-  padding: 128px 0 132px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 180px 0 50px;
   background: radial-gradient(ellipse 75% 55% at 92% 38%, rgba(21, 129, 72, 0.12), transparent 72%), var(--bg);
   color: var(--fg);
   border-top: 1px solid rgba(76, 218, 127, 0.16);
@@ -20,9 +24,25 @@
   background: linear-gradient(90deg, transparent, rgba(72, 218, 124, 0.78), transparent);
 }
 
-.whatsapp-community .wrap {
+.whatsapp-community .wrap,
+.whatsapp-community-wrap {
   position: relative;
   z-index: 1;
+}
+
+.whatsapp-laser-header {
+  position: absolute;
+  top: -50vh;
+  top: -50dvh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100vw, 1200px);
+  height: 100vh;
+  height: 100dvh;
+  pointer-events: none;
+  z-index: 2;
+  overflow: visible;
+  mix-blend-mode: screen;
 }
 
 .community-bridge {
@@ -357,8 +377,15 @@
 
 @media (max-width: 600px) {
   .whatsapp-community {
-    padding: 56px 0 max(56px, env(safe-area-inset-bottom));
+    padding: 120px 0 max(50px, env(safe-area-inset-bottom));
     border-top: 0;
+  }
+
+  .whatsapp-laser-header {
+    height: 100vh;
+    height: 100dvh;
+    top: -50vh;
+    top: -50dvh;
   }
 
   .whatsapp-community::before,

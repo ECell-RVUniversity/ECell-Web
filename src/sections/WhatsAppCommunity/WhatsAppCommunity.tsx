@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "../../utils/gsapSetup";
+import LaserFlow from "../../components/LaserFlow";
 import "./WhatsAppCommunity.css";
 
 // this is the url for the whatsapp student community.
@@ -234,7 +235,13 @@ export default function WhatsAppCommunity(): React.ReactElement {
 
   useEffect(() => {
     const messageList = messagesRef.current;
-    if (messageList) messageList.scrollTo({ top: messageList.scrollHeight, behavior: "smooth" });
+    if (messageList) {
+      if (typeof messageList.scrollTo === "function") {
+        messageList.scrollTo({ top: messageList.scrollHeight, behavior: "smooth" });
+      } else {
+        messageList.scrollTop = messageList.scrollHeight;
+      }
+    }
   }, [messages, isTyping]);
 
   useEffect(() => () => {
@@ -310,7 +317,28 @@ export default function WhatsAppCommunity(): React.ReactElement {
           </div>
         </>
       )}
-      <div className="wrap">
+      <div className="wrap whatsapp-community-wrap">
+        {isDecorativeReady && (
+          <div className="whatsapp-laser-header" aria-hidden="true">
+            <LaserFlow
+              horizontalBeamOffset={0.0}
+              verticalBeamOffset={0.0}
+              verticalSizing={3.0}
+              horizontalSizing={0.5}
+              wispDensity={1.6}
+              wispSpeed={11.5}
+              wispIntensity={9.1}
+              flowSpeed={0.33}
+              flowStrength={0.08}
+              fogIntensity={0.27}
+              fogScale={0.21}
+              fogFallSpeed={0.04}
+              decay={1.1}
+              falloffStart={1.2}
+              color="#CF9EFF"
+            />
+          </div>
+        )}
         <div className="whatsapp-community-card">
           <div className="whatsapp-community-copy">
             <span className="whatsapp-community-eyebrow">
