@@ -228,7 +228,7 @@ export default function WhatsAppCommunity(): React.ReactElement {
               fogFallSpeed={0.04}
               decay={1.1}
               falloffStart={1.2}
-              color="#CF9EFF"
+              color="#8EDCFF"
             />
           </div>
         )}

@@ -377,7 +377,7 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
       uFalloffStart: { value: falloffStart },
       uFogFallSpeed: { value: fogFallSpeed },
       uColor: { value: new THREE.Vector3(initialColorRGB.r, initialColorRGB.g, initialColorRGB.b) },
-      uFade: { value: hasFadedRef.current ? 1 : 0 }
+      uFade: { value: 1.0 }
     };
     uniformsRef.current = uniforms;
 
@@ -397,7 +397,7 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
 
     const clock = new THREE.Clock();
     let prevTime = 0;
-    let fade = hasFadedRef.current ? 1 : 0;
+    let fade = 1.0;
 
     const mouseTarget = new THREE.Vector2(0, 0);
     const mouseSmooth = new THREE.Vector2(0, 0);
@@ -438,16 +438,7 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
       ro.observe(mount);
     }
 
-    let io: IntersectionObserver | null = null;
-    if (typeof IntersectionObserver !== 'undefined') {
-      io = new IntersectionObserver(
-        entries => {
-          inViewRef.current = entries[0]?.isIntersecting ?? true;
-        },
-        { root: null, threshold: 0 }
-      );
-      io.observe(mount);
-    }
+    inViewRef.current = true;
 
     const onVis = () => {
       pausedRef.current = typeof document !== 'undefined' ? document.hidden : false;
@@ -524,7 +515,7 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
 
     const animate = () => {
       raf = requestAnimationFrame(animate);
-      if (pausedRef.current || !inViewRef.current) return;
+      if (pausedRef.current) return;
 
       const t = clock.getElapsedTime();
       const dt = Math.max(0, t - prevTime);
@@ -540,13 +531,6 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
       const cdt = Math.min(0.033, Math.max(0.001, dt));
       (uniforms.uFlowTime.value as number) += cdt;
       (uniforms.uFogTime.value as number) += cdt;
-
-      if (!hasFadedRef.current) {
-        const fadeDur = 1.0;
-        fade = Math.min(1, fade + cdt / fadeDur);
-        uniforms.uFade.value = fade;
-        if (fade >= 1) hasFadedRef.current = true;
-      }
 
       const tau = Math.max(1e-3, mouseSmoothTime);
       const alpha = 1 - Math.exp(-cdt / tau);
@@ -564,7 +548,6 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
       cancelAnimationFrame(raf);
       if (resizeRaf) cancelAnimationFrame(resizeRaf);
       ro?.disconnect();
-      io?.disconnect();
       if (typeof document !== 'undefined') {
         document.removeEventListener('visibilitychange', onVis);
       }
